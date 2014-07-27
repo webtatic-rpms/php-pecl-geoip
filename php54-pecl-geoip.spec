@@ -2,7 +2,7 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
 %{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 
-%global basepkg   php55w
+%global basepkg   php54w
 %define pecl_name geoip
 
 # Build ZTS extension or only NTS
@@ -165,6 +165,4 @@ fi
 
 %changelog
 * Sun Jul 27 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-1
-- Import spec from EPEL 6 php-pecl-geoip-1.0.8-3
-- Update to have php55w prefix
-- Add ZTS compilation support
+- Fork from php55w-pecl-geoip-1.0.8-1
