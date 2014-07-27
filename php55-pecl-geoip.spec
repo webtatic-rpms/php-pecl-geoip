@@ -2,11 +2,12 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
 %{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 
+%global basepkg   php55w
 %define pecl_name geoip
 
-Name:		php-pecl-geoip
+Name:		%{basepkg}-pecl-geoip
 Version:	1.0.8
-Release:	3%{?dist}
+Release:	1%{?dist}
 Summary:	Extension to map IP addresses to geographic places
 Group:		Development/Languages
 License:	PHP
@@ -18,8 +19,8 @@ Patch1:		geoip-tests.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:	GeoIP-devel
-BuildRequires:	php-devel
-BuildRequires:	php-pear >= 1:1.4.0
+BuildRequires:	%{basepkg}-devel
+BuildRequires:	%{basepkg}-pear >= 1:1.4.0
 %if 0%{?php_zend_api:1}
 Requires:     php(zend-abi) = %{php_zend_api}
 Requires:     php(api) = %{php_core_api}
@@ -29,6 +30,7 @@ Requires:     php-api = %{php_apiver}
 Requires(post):	%{__pecl}
 Requires(postun):	%{__pecl}
 Provides:	php-pecl(%{pecl_name}) = %{version}
+Provides:       php-pecl-%{pecl_name} = %{version}
 
 # RPM 4.8
 %{?filter_provides_in: %filter_provides_in %{php_extdir}/.*\.so$}
