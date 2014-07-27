@@ -5,6 +5,9 @@
 %global basepkg   php55w
 %define pecl_name geoip
 
+# Build ZTS extension or only NTS
+%global with_zts      1
+
 Name:		%{basepkg}-pecl-geoip
 Version:	1.0.8
 Release:	1%{?dist}
@@ -57,44 +60,80 @@ if test "x${extver}" != "x%{version}"; then
    exit 1
 fi
 
-cd %{pecl_name}-%{version}
+pushd %{pecl_name}-%{version}
 %patch1 -p0 -b .tests
+popd
 
+%if %{with_zts}
+cp -r %{pecl_name}-%{version} %{pecl_name}-%{version}-zts
+%endif
 
 %build
-cd %{pecl_name}-%{version}
+pushd %{pecl_name}-%{version}
 phpize
-%configure
+%configure --with-php-config=%{_bindir}/php-config
 %{__make} %{?_smp_mflags}
+popd
 
+%if %{with_zts}
+pushd %{pecl_name}-%{version}-zts
+zts-phpize
+%configure --with-php-config=%{_bindir}/zts-php-config
+%{__make} %{?_smp_mflags}
+popd
+%endif
 
 %install
-cd %{pecl_name}-%{version}
 %{__rm} -rf %{buildroot}
+
+pushd %{pecl_name}-%{version}
 %{__make} install INSTALL_ROOT=%{buildroot} INSTALL="install -p"
+popd
+
+%if %{with_zts}
+pushd %{pecl_name}-%{version}-zts
+%{__make} install INSTALL_ROOT=%{buildroot} INSTALL="install -p"
+popd
+%endif
 
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/php.d
-%{__cat} > %{buildroot}%{_sysconfdir}/php.d/%{pecl_name}.ini << 'EOF'
+%{__cat} > %{buildroot}%{php_inidir}/%{pecl_name}.ini << 'EOF'
 ; Enable %{pecl_name} extension module
 extension=%{pecl_name}.so
 EOF
+
+%if %{with_zts}
+%{__mkdir_p} %{buildroot}%{php_ztsinidir}
+%{__cp} %{buildroot}%{php_inidir}/%{pecl_name}.ini %{buildroot}%{php_ztsinidir}/%{pecl_name}.ini
+%endif
 
 %{__mkdir_p} %{buildroot}%{pecl_xmldir}
 %{__install} -p -m 644 %{pecl_name}.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
 
 
 #broken on el5 ppc
-#%check
-#cd %{pecl_name}-%{version}
+%check
+pushd %{pecl_name}-%{version}
+TEST_PHP_EXECUTABLE=$(which php) \
+REPORT_EXIT_STATUS=1 \
+NO_INTERACTION=1 \
+%{_bindir}/php run-tests.php \
+    -n -q \
+    -d extension_dir=modules \
+    -d extension=%{pecl_name}.so
+popd
 
-#TEST_PHP_EXECUTABLE=%{_bindir}/php \
-#REPORT_EXIT_STATUS=1 \
-#NO_INTERACTION=1 \
-#%{_bindir}/php run-tests.php \
-#    -n -q \
-#    -d extension_dir=modules \
-#    -d extension=%{pecl_name}.so
-
+%if %{with_zts}
+pushd %{pecl_name}-%{version}-zts
+TEST_PHP_EXECUTABLE=$(which zts-php) \
+REPORT_EXIT_STATUS=1 \
+NO_INTERACTION=1 \
+%{_bindir}/zts-php run-tests.php \
+    -n -q \
+    -d extension_dir=modules \
+    -d extension=%{pecl_name}.so
+popd
+%endif
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -115,10 +154,17 @@ fi
 %files
 %defattr(-,root,root,-)
 %doc %{pecl_name}-%{version}/{README,ChangeLog}
-%config(noreplace) %{_sysconfdir}/php.d/%{pecl_name}.ini
+%config(noreplace) %{php_inidir}/%{pecl_name}.ini
 %{php_extdir}/%{pecl_name}.so
 %{pecl_xmldir}/%{name}.xml
+
+%if %{with_zts}
+%config(noreplace) %{php_ztsinidir}/%{pecl_name}.ini
+%{php_ztsextdir}/%{pecl_name}.so
+%endif
 
 %changelog
 * Sun Jul 27 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-1
 - Import spec from EPEL 6 php-pecl-geoip-1.0.8-3
+- Update to have php55w prefix
+- Add ZTS compilation support
