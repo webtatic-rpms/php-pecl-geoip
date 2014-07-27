@@ -108,7 +108,7 @@ EOF
 %endif
 
 %{__mkdir_p} %{buildroot}%{pecl_xmldir}
-%{__install} -p -m 644 %{pecl_name}.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
+%{__install} -p -m 644 %{pecl_name}-%{version}/%{pecl_name}.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
 
 
 #broken on el5 ppc
