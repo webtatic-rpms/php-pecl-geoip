@@ -3,14 +3,12 @@
 %{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 
 %global basepkg   php54w
-%define pecl_name geoip
-
-# Build ZTS extension or only NTS
-%global with_zts      1
+%global pecl_name geoip
+%global with_zts  0%{?__ztsphp:1}
 
 Name:		%{basepkg}-pecl-geoip
 Version:	1.0.8
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Extension to map IP addresses to geographic places
 Group:		Development/Languages
 License:	PHP
@@ -35,11 +33,11 @@ Requires(postun):	%{__pecl}
 Provides:	php-pecl(%{pecl_name}) = %{version}
 Provides:       php-pecl-%{pecl_name} = %{version}
 
-# RPM 4.8
-%{?filter_provides_in: %filter_provides_in %{php_extdir}/.*\.so$}
+%if 0%{?fedora} < 20 && 0%{?rhel} < 7
+# Filter private shared
+%{?filter_provides_in: %filter_provides_in %{_libdir}/.*\.so$}
 %{?filter_setup}
-# RPM 4.9
-%global __provides_exclude_from %{?__provides_exclude_from:%__provides_exclude_from|}%{php_extdir}/.*\\.so$
+%endif
 
 
 %description
@@ -164,5 +162,8 @@ fi
 %endif
 
 %changelog
+* Sat Sep 13 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-2
+- Remove .so filter provider on EL7
+
 * Sun Jul 27 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-1
 - Fork from php55w-pecl-geoip-1.0.8-1
