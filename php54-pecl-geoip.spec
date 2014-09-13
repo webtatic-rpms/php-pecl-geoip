@@ -164,6 +164,7 @@ fi
 %changelog
 * Sat Sep 13 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-2
 - Remove .so filter provider on EL7
+- Tie zts compilation to macro
 
 * Sun Jul 27 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-1
 - Fork from php55w-pecl-geoip-1.0.8-1
