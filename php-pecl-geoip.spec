@@ -2,7 +2,7 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
 %{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 
-%global basepkg   php54w
+%global basepkg   %{?basepkg}%{!?basepkg:php}
 %global pecl_name geoip
 %global with_zts  0%{?__ztsphp:1}
 
