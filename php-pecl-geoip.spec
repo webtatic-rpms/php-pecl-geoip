@@ -7,8 +7,8 @@
 %global with_zts  0%{?__ztsphp:1}
 
 Name:		%{basepkg}-pecl-geoip
-Version:	1.0.8
-Release:	2%{?dist}
+Version:	1.1.1
+Release:	1%{?dist}
 Summary:	Extension to map IP addresses to geographic places
 Group:		Development/Languages
 License:	PHP
@@ -162,6 +162,9 @@ fi
 %endif
 
 %changelog
+* Sun Aug 28 2016 Andy Thompson <andy@webtatic.com> - 1.1.1-1
+- Update to geoip 1.1.1
+
 * Sat Sep 13 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-2
 - Remove .so filter provider on EL7
 - Tie zts compilation to macro
