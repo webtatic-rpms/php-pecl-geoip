@@ -15,9 +15,6 @@ License:	PHP
 URL:		http://pecl.php.net/package/%{pecl_name}
 Source0:	http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 
-# https://bugs.php.net/bug.php?id=59804
-Patch1:		geoip-tests.patch
-
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:	GeoIP-devel
 BuildRequires:	%{basepkg}-devel
@@ -57,10 +54,6 @@ if test "x${extver}" != "x%{version}"; then
    : Error: Upstream version is ${extver}, expecting %{version}.
    exit 1
 fi
-
-pushd %{pecl_name}-%{version}
-%patch1 -p0 -b .tests
-popd
 
 %if %{with_zts}
 cp -r %{pecl_name}-%{version} %{pecl_name}-%{version}-zts
@@ -162,8 +155,9 @@ fi
 %endif
 
 %changelog
-* Sun Aug 28 2016 Andy Thompson <andy@webtatic.com> - 1.1.1-1
+* Sun Jun 11 2017 Andy Thompson <andy@webtatic.com> - 1.1.1-1
 - Update to geoip 1.1.1
+- Remove tests patch fixed upstream
 
 * Sat Sep 13 2014 Andy Thompson <andy@webtatic.com> - 1.0.8-2
 - Remove .so filter provider on EL7
