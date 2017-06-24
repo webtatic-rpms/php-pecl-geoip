@@ -8,7 +8,7 @@
 
 Name:		%{basepkg}-pecl-geoip
 Version:	1.1.1
-Release:	1%{?dist}
+Release:	1.1%{?dist}
 Summary:	Extension to map IP addresses to geographic places
 Group:		Development/Languages
 License:	PHP
@@ -156,6 +156,9 @@ fi
 %endif
 
 %changelog
+* Sat Jun 24 2017 Andy Thompson <andy@webtatic.com> - 1.1.1-1.1
+- Rebuild for php-7.2.0alpha2 Zend ABI version change
+
 * Sun Jun 11 2017 Andy Thompson <andy@webtatic.com> - 1.1.1-1
 - Update to geoip 1.1.1
 - Remove tests patch fixed upstream
